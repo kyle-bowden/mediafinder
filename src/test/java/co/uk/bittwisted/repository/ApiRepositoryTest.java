@@ -10,9 +10,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
@@ -25,8 +23,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Created by kvfbowden on 5/26/2017.
  */
-@RunWith(MockitoJUnitRunner.class)
-public class AbstractApiRepositoryTest {
+public class ApiRepositoryTest {
 	
 	private final String VALID_URL = "http://www.test.com/";
 	private final String responseSuccessBody = "{\n" +
