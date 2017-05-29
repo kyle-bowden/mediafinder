@@ -21,15 +21,15 @@ import java.util.Optional;
 public class MediaFinder implements CommandLineRunner {
     private Logger logger = LoggerFactory.getLogger(MediaFinder.class);
     
-    private final String APPLICATION_NAME = "Media Finder";
-    private final String TEXT_TITLE_MUSIC = "Search API [%s] for Music [%s]";
-    private final String TEXT_FOUND_MUSIC = "Found Music [%s]";
-    private final String TEXT_TITLE_MOVIE = "Search API [%s] for Movie [%s]";
-    private final String TEXT_FOUND_MOVIE = "Found Movie [%s]";
-    private final String INVALID_API = "There are two API's supported by this program [tmdb(Movies), lastfm(Music)]";
-    private final String NO_API_COMMAND = "You will need to pass the api command e.g -Dapi=lastfm";
-    private final String NO_QUERY_COMMAND = "You will need to pass a query string command e.g -Dquery=\"Star Wars\"";
-    private final String NO_RESULTS = "API [%s] returned no search results for query [%s].";
+    private final String APPLICATION_NAME   = "Media Finder";
+    private final String TEXT_TITLE_MUSIC   = "Search API [%s] for Music Album [%s]";
+    private final String TEXT_FOUND_MUSIC   = "Found Music Album [%s]";
+    private final String TEXT_TITLE_MOVIE   = "Search API [%s] for Movie [%s]";
+    private final String TEXT_FOUND_MOVIE   = "Found Movie [%s]";
+    private final String INVALID_API        = "There are two API's supported by this program [tmdb(Movies), lastfm(Music Albums)]";
+    private final String NO_API_COMMAND     = "You will need to pass the api command e.g -Dapi=lastfm";
+    private final String NO_QUERY_COMMAND   = "You will need to pass a query string command e.g -Dquery=\"Star Wars\"";
+    private final String NO_RESULTS         = "API [%s] returned no search results for query [%s].";
     
     @Autowired
     private LastFMApiManager lastFMApiManager;
@@ -62,18 +62,23 @@ public class MediaFinder implements CommandLineRunner {
             logger.warn(pe.getLocalizedMessage());
         }
         
-        String api;
         Optional<String> optionalApi = args.getApi();
         if(optionalApi.isPresent()) {
-            api = optionalApi.get();
-            if(api.equals(lastFMApiManager.getArgName())) {
-                handleMusicSearch(args);
-            } else
-            if(api.equals(tmdbApiManager.getArgName())) {
-                handleMovieSearch(args);
+            String api = optionalApi.get();
+            String query = getQuery(args);
+            if(!query.equals("")) {
+                if(api.equals(lastFMApiManager.getArgName())) {
+                    handleMusicSearch(query);
+                } else
+                if(api.equals(tmdbApiManager.getArgName())) {
+                    handleMovieSearch(query);
+                } else {
+                    // not a valid api specified
+                    logger.warn(INVALID_API);
+                }
             } else {
-                // not a valid api specified
-                logger.warn(INVALID_API);
+                // query cannot be empty
+                logger.warn(NO_QUERY_COMMAND);
             }
         } else {
             // not a valid command
@@ -91,20 +96,12 @@ public class MediaFinder implements CommandLineRunner {
         
         if(defaultQuery.isPresent()) {
             query = defaultQuery.get();
-            if(!query.equals("")) {
-                return query;
-            } else {
-                // query cannot be empty
-                logger.warn(NO_QUERY_COMMAND);
-            }
         }
         
         return query;
     }
     
-    private void handleMovieSearch(Args args) {
-        String query = getQuery(args);
-        
+    private void handleMovieSearch(String query) {
         List<MovieInfo> movieInfoList = tmdbApiManager.search(query);
         logger.info(String.format(TEXT_TITLE_MOVIE, tmdbApiManager.getArgName(), query));
         
@@ -115,9 +112,7 @@ public class MediaFinder implements CommandLineRunner {
         }
     }
     
-    private void handleMusicSearch(Args args) {
-        String query = getQuery(args);
-
+    private void handleMusicSearch(String query) {
         List<AlbumInfo> albumInfoList = lastFMApiManager.search(query);
         logger.info(String.format(TEXT_TITLE_MUSIC, lastFMApiManager.getArgName(), query));
     
