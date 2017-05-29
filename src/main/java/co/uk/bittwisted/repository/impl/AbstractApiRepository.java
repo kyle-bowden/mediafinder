@@ -35,11 +35,11 @@ public abstract class AbstractApiRepository<T extends BaseMediaInfo> implements 
 		this.apiBaseURL = apiBaseURL;
 	}
 	
-	protected Optional<JsonNode> doGet() {
+	public Optional<JsonNode> doGet() {
 		return doGet(new HashMap<>());
 	}
 	
-	protected Optional<JsonNode> doGet(Map<String, String> params) {
+	public Optional<JsonNode> doGet(Map<String, String> params) {
 		StringBuilder result = new StringBuilder();
 		Optional<JsonNode> optional = Optional.empty();
 		
@@ -52,7 +52,7 @@ public abstract class AbstractApiRepository<T extends BaseMediaInfo> implements 
 				throw new IllegalStateException("URI could not be formed from set url and parameters.");
 			}
 			
-			httpClient = HttpClientBuilder.create().build();
+			if(httpClient == null) httpClient = HttpClientBuilder.create().build();
 			HttpGet request = new HttpGet(uri);
 			
 			request.addHeader("User-Agent", USER_AGENT);
@@ -102,7 +102,7 @@ public abstract class AbstractApiRepository<T extends BaseMediaInfo> implements 
 		this.apiBaseURL = apiBaseURL;
 	}
 	
-	void setHttpClient(HttpClient httpClient) {
+	public void setHttpClient(HttpClient httpClient) {
 		this.httpClient = httpClient;
 	}
 }

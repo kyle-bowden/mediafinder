@@ -103,7 +103,7 @@ public class TMDBApiRepositoryTest {
 						"}";
 		
 		@Override
-		protected Optional<JsonNode> doGet(Map<String, String> params) {
+		public Optional<JsonNode> doGet(Map<String, String> params) {
 			JsonNode jsonNode;
 			ObjectMapper mapper = new ObjectMapper();
 			Optional<JsonNode> optional = Optional.empty();
