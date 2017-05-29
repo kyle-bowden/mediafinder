@@ -1,6 +1,7 @@
 package co.uk.bittwisted.repository;
 
 import co.uk.bittwisted.domain.MovieInfo;
+import co.uk.bittwisted.repository.impl.TMDBApiRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
