@@ -1,5 +1,6 @@
 package co.uk.bittwisted.service.impl;
 
+import co.uk.bittwisted.common.exceptions.MediaFinderException;
 import co.uk.bittwisted.domain.MovieInfo;
 import co.uk.bittwisted.repository.impl.TMDBApiRepository;
 import co.uk.bittwisted.service.ApiManager;
@@ -19,7 +20,7 @@ public class TMDBApiManager implements ApiManager<MovieInfo> {
 	public TMDBApiManager() {}
 	
 	@Override
-	public List<MovieInfo> search(String query) {
+	public List<MovieInfo> search(String query) throws MediaFinderException {
 		return repository.search(query);
 	}
 	

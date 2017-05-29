@@ -1,5 +1,6 @@
 package co.uk.bittwisted.service.impl;
 
+import co.uk.bittwisted.common.exceptions.MediaFinderException;
 import co.uk.bittwisted.domain.AlbumInfo;
 import co.uk.bittwisted.repository.impl.LastFMApiRepository;
 import co.uk.bittwisted.service.ApiManager;
@@ -21,7 +22,7 @@ public class LastFMApiManager implements ApiManager<AlbumInfo> {
 	public LastFMApiManager() {}
 	
 	@Override
-	public List<AlbumInfo> search(String query) {
+	public List<AlbumInfo> search(String query) throws MediaFinderException {
 		return repository.search(query);
 	}
 	

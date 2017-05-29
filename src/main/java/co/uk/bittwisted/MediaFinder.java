@@ -1,5 +1,6 @@
 package co.uk.bittwisted;
 
+import co.uk.bittwisted.common.exceptions.MediaFinderException;
 import co.uk.bittwisted.domain.AlbumInfo;
 import co.uk.bittwisted.domain.MovieInfo;
 import co.uk.bittwisted.service.impl.LastFMApiManager;
@@ -31,6 +32,7 @@ public class MediaFinder implements CommandLineRunner {
     private final String NO_API_COMMAND     = "You will need to pass the api command e.g -Dapi=lastfm";
     private final String NO_QUERY_COMMAND   = "You will need to pass a query string command e.g -Dquery=\"Star Wars\"";
     private final String NO_RESULTS         = "API [%s] returned no search results for query [%s].";
+    private final String INTERNAL_ERROR     = "There was an internal error and the request could not be processed.";
     
     @Autowired
     private LastFMApiManager lastFMApiManager;
@@ -91,6 +93,36 @@ public class MediaFinder implements CommandLineRunner {
         System.exit(0);
     }
     
+    private void handleMovieSearch(String query) {
+        try {
+            List<MovieInfo> movieInfoList = tmdbApiManager.search(query);
+            logger.info(String.format(TEXT_TITLE_MOVIE, tmdbApiManager.getArgName(), query));
+    
+            if(movieInfoList.size() > 0) {
+                movieInfoList.forEach(movieInfo -> logger.info(String.format(TEXT_FOUND_MOVIE, movieInfo.toString())));
+            } else {
+                logger.info(String.format(NO_RESULTS, tmdbApiManager.getArgName(), query));
+            }
+        } catch (MediaFinderException e) {
+            logger.info(INTERNAL_ERROR);
+        }
+    }
+    
+    private void handleMusicSearch(String query) {
+        try {
+            List<AlbumInfo> albumInfoList = lastFMApiManager.search(query);
+            logger.info(String.format(TEXT_TITLE_MUSIC, lastFMApiManager.getArgName(), query));
+        
+            if(albumInfoList.size() > 0) {
+                albumInfoList.forEach(albumInfo -> logger.info(String.format(TEXT_FOUND_MUSIC, albumInfo.toString())));
+            } else {
+                logger.info(String.format(NO_RESULTS, lastFMApiManager.getArgName(), query));
+            }
+        } catch (MediaFinderException e) {
+            logger.info(INTERNAL_ERROR);
+        }
+    }
+    
     private String getQuery(Args args) {
         String query = "";
         Optional<String> defaultQuery = args.getSearchQuery();
@@ -100,27 +132,5 @@ public class MediaFinder implements CommandLineRunner {
         }
         
         return query;
-    }
-    
-    private void handleMovieSearch(String query) {
-        List<MovieInfo> movieInfoList = tmdbApiManager.search(query);
-        logger.info(String.format(TEXT_TITLE_MOVIE, tmdbApiManager.getArgName(), query));
-        
-        if(movieInfoList.size() > 0) {
-            movieInfoList.forEach(movieInfo -> logger.info(String.format(TEXT_FOUND_MOVIE, movieInfo.toString())));
-        } else {
-            logger.info(String.format(NO_RESULTS, tmdbApiManager.getArgName(), query));
-        }
-    }
-    
-    private void handleMusicSearch(String query) {
-        List<AlbumInfo> albumInfoList = lastFMApiManager.search(query);
-        logger.info(String.format(TEXT_TITLE_MUSIC, lastFMApiManager.getArgName(), query));
-    
-        if(albumInfoList.size() > 0) {
-            albumInfoList.forEach(albumInfo -> logger.info(String.format(TEXT_FOUND_MUSIC, albumInfo.toString())));
-        } else {
-            logger.info(String.format(NO_RESULTS, lastFMApiManager.getArgName(), query));
-        }
     }
 }
