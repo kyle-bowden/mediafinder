@@ -5,12 +5,12 @@ package co.uk.bittwisted.domain;
  */
 public class AlbumInfo extends BaseMediaInfo {
 	private String artist;
-	private String producer;
+	private String urlArtistInfo;
 	
-	public AlbumInfo(String title, String year, String artist, String producer) {
-		super(title, year);
+	public AlbumInfo(String title, String artist, String urlArtistInfo) {
+		super(title);
 		this.artist = artist;
-		this.producer = producer;
+		this.urlArtistInfo = urlArtistInfo;
 	}
 	
 	public String getArtist() {
@@ -21,11 +21,28 @@ public class AlbumInfo extends BaseMediaInfo {
 		this.artist = artist;
 	}
 	
-	public String getProducer() {
-		return producer;
+	public String getUrlArtistInfo() {
+		return urlArtistInfo;
 	}
 	
-	public void setProducer(String producer) {
-		this.producer = producer;
+	public void setUrlArtistInfo(String urlArtistInfo) {
+		this.urlArtistInfo = urlArtistInfo;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof AlbumInfo)) return false;
+		
+		AlbumInfo albumInfo = (AlbumInfo) o;
+		
+		return artist.equals(albumInfo.artist) && urlArtistInfo.equals(albumInfo.urlArtistInfo);
+	}
+	
+	@Override
+	public int hashCode() {
+		int result = artist.hashCode();
+		result = 31 * result + urlArtistInfo.hashCode();
+		return result;
 	}
 }
