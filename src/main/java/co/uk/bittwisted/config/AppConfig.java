@@ -1,4 +1,4 @@
-package co.uk.bittwisted.ui.config;
+package co.uk.bittwisted.config;
 
 import co.uk.bittwisted.repository.impl.LastFMApiRepository;
 import co.uk.bittwisted.repository.impl.TMDBApiRepository;
@@ -13,22 +13,22 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AppConfig {
 	
-	@Bean(name = "lastFMApiRepository")
+	@Bean
 	public LastFMApiRepository lastFMApiRepository() {
 		return new LastFMApiRepository();
 	}
 	
-	@Bean(name = "lastFMApiManager")
+	@Bean
 	public LastFMApiManager lastFMApiManager() {
 		return new LastFMApiManager();
 	}
 	
-	@Bean(name = "tmdbApiRepository")
+	@Bean
 	public TMDBApiRepository tmdbApiRepository() {
 		return new TMDBApiRepository();
 	}
 	
-	@Bean(name = "tmdbApiManager")
+	@Bean
 	public TMDBApiManager tmdbApiManager() {
 		return new TMDBApiManager();
 	}

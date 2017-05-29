@@ -1,9 +1,10 @@
-package co.uk.bittwisted.ui;
+package co.uk.bittwisted;
 
 import co.uk.bittwisted.domain.AlbumInfo;
 import co.uk.bittwisted.domain.MovieInfo;
 import co.uk.bittwisted.service.impl.LastFMApiManager;
 import co.uk.bittwisted.service.impl.TMDBApiManager;
+import co.uk.bittwisted.ui.Args;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import org.slf4j.Logger;
