@@ -19,7 +19,7 @@ import static org.junit.Assert.assertNotNull;
  */
 public class TMDBApiRepositoryTest {
 	@Test
-	public void search() throws Exception {
+	public void searchTMDBRepository() throws Exception {
 		List<MovieInfo> movieInfoList = mockRepository.search("");
 		
 		assertNotNull(movieInfoList);
