@@ -45,4 +45,13 @@ public class AlbumInfo extends BaseMediaInfo {
 		result = 31 * result + urlArtistInfo.hashCode();
 		return result;
 	}
+	
+	@Override
+	public String toString() {
+		return "AlbumInfo{" +
+						"title='" + getTitle() + '\'' +
+						", artist='" + artist + '\'' +
+						", urlArtistInfo='" + urlArtistInfo + '\'' +
+						'}';
+	}
 }
