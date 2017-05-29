@@ -1,12 +1,17 @@
 package co.uk.bittwisted.repository.impl;
 
+import co.uk.bittwisted.common.exceptions.MediaFinderException;
 import co.uk.bittwisted.domain.AlbumInfo;
 import co.uk.bittwisted.repository.mappers.AlbumInfoDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.*;
 
 /**
@@ -14,6 +19,8 @@ import java.util.*;
  */
 @Service
 public class LastFMApiRepository extends AbstractApiRepository<AlbumInfo> {
+	private Logger logger = LoggerFactory.getLogger(LastFMApiRepository.class);
+	
 	private static final String API_KEY       = "f46a88037b946a829463c54c8e81b71b";
 	private static final String API_BASE_URL  = "http://ws.audioscrobbler.com/2.0/";
 	
@@ -40,11 +47,17 @@ public class LastFMApiRepository extends AbstractApiRepository<AlbumInfo> {
 	}
 	
 	@Override
-	public List<AlbumInfo> search(String query) {
+	public List<AlbumInfo> search(String query) throws MediaFinderException {
 		searchParams.put(queryParamName, query);
 		
 		List<AlbumInfo> albumInfoList = new ArrayList<>();
-		Optional<JsonNode> optional = doGet(searchParams);
+		Optional<JsonNode> optional;
+		try {
+			optional = doGet(searchParams);
+		} catch (IOException | IllegalStateException | URISyntaxException e) {
+			logger.error(String.format("Failed to process request for url [%s] with error [%s]", API_BASE_URL, e.getLocalizedMessage()));
+			throw new MediaFinderException(String.format("Failed to process request for url [%s] with error [%s]", API_BASE_URL, e.getLocalizedMessage()));
+		}
 		
 		if(optional.isPresent()) {
 			JsonNode jsonNode = optional.get();

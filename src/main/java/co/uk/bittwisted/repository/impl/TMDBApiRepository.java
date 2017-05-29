@@ -1,17 +1,24 @@
 package co.uk.bittwisted.repository.impl;
 
+import co.uk.bittwisted.common.exceptions.MediaFinderException;
 import co.uk.bittwisted.domain.MovieInfo;
 import co.uk.bittwisted.repository.mappers.MovieInfoDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.*;
 
 /**
  * Created by kvfbowden on 5/25/2017.
  */
 public class TMDBApiRepository extends AbstractApiRepository<MovieInfo> {
+	private Logger logger = LoggerFactory.getLogger(TMDBApiRepository.class);
+	
 	private static final String API_KEY       = "4552703f32df6373eedd611f8a6d3e6d";
 	private static final String API_BASE_URL  = "https://api.themoviedb.org/3/search/movie/";
 	
@@ -38,11 +45,17 @@ public class TMDBApiRepository extends AbstractApiRepository<MovieInfo> {
 	}
 	
 	@Override
-	public List<MovieInfo> search(String query) {
+	public List<MovieInfo> search(String query) throws MediaFinderException {
 		searchParams.put(queryParamName, query);
 		
 		List<MovieInfo> movieInfoList = new ArrayList<>();
-		Optional<JsonNode> optional = doGet(searchParams);
+		Optional<JsonNode> optional;
+		try {
+			optional = doGet(searchParams);
+		} catch (IOException | IllegalStateException | URISyntaxException e) {
+			logger.error(String.format("Failed to process request for url [%s] with error [%s]", API_BASE_URL, e.getLocalizedMessage()));
+			throw new MediaFinderException(String.format("Failed to process request for url [%s] with error [%s]", API_BASE_URL, e.getLocalizedMessage()));
+		}
 		
 		if(optional.isPresent()) {
 			JsonNode jsonNode = optional.get();

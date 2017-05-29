@@ -12,6 +12,7 @@ import org.apache.http.message.BasicStatusLine;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.LinkedHashMap;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.mock;
 public class ApiRepositoryTest {
 	
 	private final String VALID_URL = "http://www.test.com/";
+	
 	private final String responseSuccessBody = "{\n" +
 					"  \"results\": {\n" +
 					"    \"opensearch:Query\": {\n" +
@@ -70,8 +72,21 @@ public class ApiRepositoryTest {
 		Optional<JsonNode> httpResponse = lastFMApiRepository.doGet();
 		assertTrue(httpResponse.isPresent());
 	}
+	
+	@Test(expected = IllegalStateException.class)
+	public void testDoGetResponseUnsuccessful() throws Exception {
+		HttpResponse response = prepareResponse(400, responseSuccessBody);
+		HttpClient mockClient = mock(HttpClient.class);
+		Mockito.when(mockClient.execute(Mockito.any(HttpUriRequest.class))).thenReturn(response);
+		
+		LastFMApiRepository lastFMApiRepository = new LastFMApiRepository();
+		lastFMApiRepository.setHttpClient(mockClient);
+		lastFMApiRepository.setApiBaseURL(VALID_URL);
+		
+		lastFMApiRepository.doGet();
+	}
 
-	@Test
+	@Test(expected = IOException.class)
 	public void testDoGetUnsuccessfulJsonParsingReturnsEmpty() throws Exception {
 		HttpResponse response = prepareResponse(200, malformedJsonResponse);
 		HttpClient mockClient = mock(HttpClient.class);
@@ -81,12 +96,11 @@ public class ApiRepositoryTest {
 		lastFMApiRepository.setHttpClient(mockClient);
 		lastFMApiRepository.setApiBaseURL(VALID_URL);
 		
-		Optional<JsonNode> httpResponse = lastFMApiRepository.doGet();
-		assertTrue(!httpResponse.isPresent());
+		lastFMApiRepository.doGet();
 	}
 	
 	@Test
-	public void testGetURLWithParameters() {
+	public void testGetURLWithParameters() throws Exception {
 		LinkedHashMap<String, String> params = new LinkedHashMap<>();
 		params.put("test1", "value1");
 		params.put("test2", "value2");

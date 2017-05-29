@@ -35,65 +35,60 @@ public abstract class AbstractApiRepository<T extends BaseMediaInfo> implements 
 		this.apiBaseURL = apiBaseURL;
 	}
 	
-	public Optional<JsonNode> doGet() {
+	public Optional<JsonNode> doGet() throws IOException,
+					IllegalStateException, URISyntaxException {
 		return doGet(new HashMap<>());
 	}
 	
-	public Optional<JsonNode> doGet(Map<String, String> params) {
+	public Optional<JsonNode> doGet(Map<String, String> params) throws IOException,
+					IllegalStateException, URISyntaxException {
 		StringBuilder result = new StringBuilder();
 		Optional<JsonNode> optional = Optional.empty();
 		
-		try {
-			URI uri;
-			Optional<URI> uriOptional = getUrlWithParameters(params);
-			if(uriOptional.isPresent()) {
-				uri = uriOptional.get();
-			} else {
-				throw new IllegalStateException("URI could not be formed from set url and parameters.");
-			}
-			
-			if(httpClient == null) httpClient = HttpClientBuilder.create().build();
-			HttpGet request = new HttpGet(uri);
-			
-			request.addHeader("User-Agent", USER_AGENT);
-			HttpResponse response = httpClient.execute(request);
-			
-			int responseStatus = response.getStatusLine().getStatusCode();
-			if(responseStatus != 200) {
-				throw new IllegalStateException("Expected HTTP response status 200 " +
-								"but instead got [" + responseStatus + "]");
-			}
-			
-			BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-			
-			String line;
-			while((line  = br.readLine()) != null) {
-				result.append(line);
-			}
-			
-			if(!result.toString().equals("")) {
-				ObjectMapper mapper = new ObjectMapper();
-				JsonNode jsonNode = mapper.readTree(result.toString());
-				optional = Optional.ofNullable(jsonNode);
-			}
-		} catch (IOException | IllegalStateException e) {
-			logger.error(String.format("Http request failed with error \n %s", e.getMessage()));
+		URI uri;
+		Optional<URI> uriOptional = getUrlWithParameters(params);
+		if(uriOptional.isPresent()) {
+			uri = uriOptional.get();
+		} else {
+			logger.error("URI could not be formed from set url and parameters.");
+			throw new IllegalStateException("URI could not be formed from set url and parameters.");
+		}
+		
+		if(httpClient == null) httpClient = HttpClientBuilder.create().build();
+		HttpGet request = new HttpGet(uri);
+		
+		request.addHeader("User-Agent", USER_AGENT);
+		HttpResponse response = httpClient.execute(request);
+		
+		int responseStatus = response.getStatusLine().getStatusCode();
+		if(responseStatus != 200) {
+			logger.error("Expected HTTP response status 200 " +
+							"but instead got [" + responseStatus + "]");
+			throw new IllegalStateException("Expected HTTP response status 200 " +
+							"but instead got [" + responseStatus + "]");
+		}
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+		String line;
+		while((line  = br.readLine()) != null) {
+			result.append(line);
+		}
+		
+		if(!result.toString().equals("")) {
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode jsonNode = mapper.readTree(result.toString());
+			optional = Optional.ofNullable(jsonNode);
 		}
 		
 		return optional;
 	}
 	
-	public Optional<URI> getUrlWithParameters(Map<String, String> params) {
-		Optional<URI> optional = Optional.empty();
-		try {
-			URI uri = new URI(apiBaseURL);
-			URIBuilder uriBuilder = new URIBuilder(uri);
-			
-			params.forEach(uriBuilder::setParameter);
-			optional = Optional.of(uriBuilder.build());
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+	public Optional<URI> getUrlWithParameters(Map<String, String> params) throws URISyntaxException {
+		URI uri = new URI(apiBaseURL);
+		URIBuilder uriBuilder = new URIBuilder(uri);
+		
+		params.forEach(uriBuilder::setParameter);
+		Optional<URI> optional = Optional.of(uriBuilder.build());
 		
 		return optional;
 	}
