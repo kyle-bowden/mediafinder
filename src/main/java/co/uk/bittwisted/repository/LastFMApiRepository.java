@@ -15,7 +15,7 @@ public class LastFMApiRepository extends AbstractApiRepository<AlbumInfo> {
 	private static final String API_KEY       = "f46a88037b946a829463c54c8e81b71b";
 	private static final String API_BASE_URL  = "http://ws.audioscrobbler.com/2.0/";
 	
-	private String albumNodeName = "album";
+	private String resultsNodeName = "album";
 	private String queryParamName = "album";
 	
 	private Map<String, String> searchParams;
@@ -51,7 +51,7 @@ public class LastFMApiRepository extends AbstractApiRepository<AlbumInfo> {
 			module.addDeserializer(AlbumInfo.class, new AlbumInfoDeserializer());
 			mapper.registerModule(module);
 			
-			JsonNode albumNode = jsonNode.findValue(albumNodeName);
+			JsonNode albumNode = jsonNode.findValue(resultsNodeName);
 			if(albumNode != null) {
 				albumNode.forEach(node -> {
 					AlbumInfo albumInfo = mapper.convertValue(node, AlbumInfo.class);

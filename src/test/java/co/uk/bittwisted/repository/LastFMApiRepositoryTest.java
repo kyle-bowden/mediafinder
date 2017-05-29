@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,11 +20,17 @@ import static org.junit.Assert.assertNotNull;
 public class LastFMApiRepositoryTest {
 	
 	@Test
-	public void search() throws Exception {
+	public void searchLastFMRepository() throws Exception {
 		List<AlbumInfo> albumInfoList = mockRepository.search("");
 		
 		assertNotNull(albumInfoList);
 		assertEquals(albumInfoList.size(), 2);
+		
+		List<AlbumInfo> expectedAlbumInfoList = new ArrayList<>();
+		expectedAlbumInfoList.add(new AlbumInfo("Deftones", "Deftones", "https://www.last.fm/music/Deftones/Deftones"));
+		expectedAlbumInfoList.add(new AlbumInfo("White Pony", "Deftones", "https://www.last.fm/music/Deftones/White+Pony"));
+		
+		assertEquals(expectedAlbumInfoList, albumInfoList);
 	}
 	
 	private LastFMApiRepository mockRepository = new LastFMApiRepository() {
