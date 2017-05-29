@@ -13,6 +13,7 @@ import java.util.List;
  */
 @Service
 public class LastFMApiManager implements ApiManager<AlbumInfo> {
+	private static String ARG_NAME = "lastfm";
 	
 	@Autowired
 	private LastFMApiRepository repository;
@@ -22,5 +23,9 @@ public class LastFMApiManager implements ApiManager<AlbumInfo> {
 	@Override
 	public List<AlbumInfo> search(String query) {
 		return repository.search(query);
+	}
+	
+	public String getArgName() {
+		return ARG_NAME;
 	}
 }
