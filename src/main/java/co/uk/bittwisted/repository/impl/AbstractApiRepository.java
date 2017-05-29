@@ -1,6 +1,7 @@
-package co.uk.bittwisted.repository;
+package co.uk.bittwisted.repository.impl;
 
 import co.uk.bittwisted.domain.BaseMediaInfo;
+import co.uk.bittwisted.repository.ApiRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpResponse;
@@ -34,11 +35,11 @@ public abstract class AbstractApiRepository<T extends BaseMediaInfo> implements 
 		this.apiBaseURL = apiBaseURL;
 	}
 	
-	Optional<JsonNode> doGet() {
+	protected Optional<JsonNode> doGet() {
 		return doGet(new HashMap<>());
 	}
 	
-	Optional<JsonNode> doGet(Map<String, String> params) {
+	protected Optional<JsonNode> doGet(Map<String, String> params) {
 		StringBuilder result = new StringBuilder();
 		Optional<JsonNode> optional = Optional.empty();
 		
@@ -82,7 +83,7 @@ public abstract class AbstractApiRepository<T extends BaseMediaInfo> implements 
 		return optional;
 	}
 	
-	Optional<URI> getUrlWithParameters(Map<String, String> params) {
+	public Optional<URI> getUrlWithParameters(Map<String, String> params) {
 		Optional<URI> optional = Optional.empty();
 		try {
 			URI uri = new URI(apiBaseURL);
@@ -97,7 +98,7 @@ public abstract class AbstractApiRepository<T extends BaseMediaInfo> implements 
 		return optional;
 	}
 	
-	void setApiBaseURL(String apiBaseURL) {
+	public void setApiBaseURL(String apiBaseURL) {
 		this.apiBaseURL = apiBaseURL;
 	}
 	

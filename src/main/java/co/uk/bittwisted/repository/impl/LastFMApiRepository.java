@@ -1,16 +1,18 @@
-package co.uk.bittwisted.repository;
+package co.uk.bittwisted.repository.impl;
 
 import co.uk.bittwisted.domain.AlbumInfo;
 import co.uk.bittwisted.repository.mappers.AlbumInfoDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 /**
  * Created by kvfbowden on 5/25/2017.
  */
+@Service
 public class LastFMApiRepository extends AbstractApiRepository<AlbumInfo> {
 	private static final String API_KEY       = "f46a88037b946a829463c54c8e81b71b";
 	private static final String API_BASE_URL  = "http://ws.audioscrobbler.com/2.0/";
@@ -27,7 +29,7 @@ public class LastFMApiRepository extends AbstractApiRepository<AlbumInfo> {
 	private final String VALUE_FORMAT = "json";
 	private final int VALUE_LIMIT_QUERY_RESULTS = 10;
 	
-	LastFMApiRepository() {
+	public LastFMApiRepository() {
 		super(API_BASE_URL);
 		
 		searchParams = new HashMap<>();

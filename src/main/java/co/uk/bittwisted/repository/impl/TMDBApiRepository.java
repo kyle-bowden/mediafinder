@@ -1,4 +1,4 @@
-package co.uk.bittwisted.repository;
+package co.uk.bittwisted.repository.impl;
 
 import co.uk.bittwisted.domain.MovieInfo;
 import co.uk.bittwisted.repository.mappers.MovieInfoDeserializer;
@@ -27,7 +27,7 @@ public class TMDBApiRepository extends AbstractApiRepository<MovieInfo> {
 	private final String VALUE_LANGUAGE = "en-US";
 	private final boolean VALUE_ADULT_CONTENT = false;
 	
-	TMDBApiRepository() {
+	public TMDBApiRepository() {
 		super(API_BASE_URL);
 		
 		searchParams = new HashMap<>();
