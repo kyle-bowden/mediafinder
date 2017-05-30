@@ -31,6 +31,10 @@ public abstract class AbstractApiRepository<T extends BaseMediaInfo> implements 
 	private HttpClient httpClient;
 	private final String USER_AGENT = "Mozilla/5.0";
 	
+	private final String MSG_MALFORMED_URI = "URI could not be formed from given url and parameters.";
+	private final String MSG_INVALID_RESPONSE_STATUS = "Expected HTTP response status 200 but instead got [%s]";
+	final String MSG_GENERIC_FAILED_TO_PROCESS_REQUEST = "Failed to process request for url [%s] with error [%s]";
+	
 	AbstractApiRepository(String apiBaseURL) {
 		this.apiBaseURL = apiBaseURL;
 	}
@@ -50,8 +54,8 @@ public abstract class AbstractApiRepository<T extends BaseMediaInfo> implements 
 		if(uriOptional.isPresent()) {
 			uri = uriOptional.get();
 		} else {
-			logger.error("URI could not be formed from set url and parameters.");
-			throw new IllegalStateException("URI could not be formed from set url and parameters.");
+			logger.error(MSG_MALFORMED_URI);
+			throw new IllegalStateException(MSG_MALFORMED_URI);
 		}
 		
 		if(httpClient == null) httpClient = HttpClientBuilder.create().build();
@@ -62,10 +66,8 @@ public abstract class AbstractApiRepository<T extends BaseMediaInfo> implements 
 		
 		int responseStatus = response.getStatusLine().getStatusCode();
 		if(responseStatus != 200) {
-			logger.error("Expected HTTP response status 200 " +
-							"but instead got [" + responseStatus + "]");
-			throw new IllegalStateException("Expected HTTP response status 200 " +
-							"but instead got [" + responseStatus + "]");
+			logger.error(String.format(MSG_INVALID_RESPONSE_STATUS, responseStatus));
+			throw new IllegalStateException(String.format(MSG_INVALID_RESPONSE_STATUS, responseStatus));
 		}
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));

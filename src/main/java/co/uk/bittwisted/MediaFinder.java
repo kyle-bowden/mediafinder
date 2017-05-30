@@ -23,16 +23,17 @@ import java.util.Optional;
 public class MediaFinder implements CommandLineRunner {
     private Logger logger = LoggerFactory.getLogger(MediaFinder.class);
     
-    private final String APPLICATION_NAME   = "Media Finder";
-    private final String TEXT_TITLE_MUSIC   = "Search API [%s] for Music Album [%s]";
-    private final String TEXT_FOUND_MUSIC   = "Found Music Album [%s]";
-    private final String TEXT_TITLE_MOVIE   = "Search API [%s] for Movie [%s]";
-    private final String TEXT_FOUND_MOVIE   = "Found Movie [%s]";
-    private final String INVALID_API        = "There are two API's supported by this program [tmdb(Movies), lastfm(Music Albums)]";
-    private final String NO_API_COMMAND     = "You will need to pass the api command e.g -Dapi=lastfm";
-    private final String NO_QUERY_COMMAND   = "You will need to pass a query string command e.g -Dquery=\"Star Wars\"";
-    private final String NO_RESULTS         = "API [%s] returned no search results for query [%s].";
-    private final String INTERNAL_ERROR     = "There was an internal error and the request could not be processed.";
+    private final String APPLICATION_NAME       = "Media Finder";
+    private final String TEXT_TITLE_MUSIC       = "Search API [%s] for Music Album [%s]";
+    private final String TEXT_FOUND_MUSIC       = "Found Music Album [%s]";
+    private final String TEXT_TITLE_MOVIE       = "Search API [%s] for Movie [%s]";
+    private final String TEXT_FOUND_MOVIE       = "Found Movie [%s]";
+    
+    private final String MSG_INVALID_API        = "There are only two supported API's for this app, please use one of the following [tmdb(Movies), lastfm(Music Albums)]";
+    private final String MSG_NO_API_COMMAND     = "You will need to pass the api command e.g -Dapi=lastfm";
+    private final String MSG_NO_QUERY_COMMAND   = "You will need to pass a query string command e.g -Dquery=\"Star Wars\"";
+    private final String MSG_NO_RESULTS         = "API [%s] returned no search results for query [%s].";
+    private final String MSG_INTERNAL_ERROR     = "There was an internal error and the request could not be processed.";
     
     @Autowired
     private LastFMApiManager lastFMApiManager;
@@ -77,15 +78,15 @@ public class MediaFinder implements CommandLineRunner {
                     handleMovieSearch(query);
                 } else {
                     // not a valid api specified
-                    logger.warn(INVALID_API);
+                    logger.warn(MSG_INVALID_API);
                 }
             } else {
                 // query cannot be empty
-                logger.warn(NO_QUERY_COMMAND);
+                logger.warn(MSG_NO_QUERY_COMMAND);
             }
         } else {
             // not a valid command
-            logger.warn(NO_API_COMMAND);
+            logger.warn(MSG_NO_API_COMMAND);
         }
     
         // releasing all resources
@@ -101,10 +102,10 @@ public class MediaFinder implements CommandLineRunner {
             if(movieInfoList.size() > 0) {
                 movieInfoList.forEach(movieInfo -> logger.info(String.format(TEXT_FOUND_MOVIE, movieInfo.toString())));
             } else {
-                logger.info(String.format(NO_RESULTS, tmdbApiManager.getArgName(), query));
+                logger.info(String.format(MSG_NO_RESULTS, tmdbApiManager.getArgName(), query));
             }
         } catch (MediaFinderException e) {
-            logger.info(INTERNAL_ERROR);
+            logger.info(MSG_INTERNAL_ERROR);
         }
     }
     
@@ -116,10 +117,10 @@ public class MediaFinder implements CommandLineRunner {
             if(albumInfoList.size() > 0) {
                 albumInfoList.forEach(albumInfo -> logger.info(String.format(TEXT_FOUND_MUSIC, albumInfo.toString())));
             } else {
-                logger.info(String.format(NO_RESULTS, lastFMApiManager.getArgName(), query));
+                logger.info(String.format(MSG_NO_RESULTS, lastFMApiManager.getArgName(), query));
             }
         } catch (MediaFinderException e) {
-            logger.info(INTERNAL_ERROR);
+            logger.info(MSG_INTERNAL_ERROR);
         }
     }
     

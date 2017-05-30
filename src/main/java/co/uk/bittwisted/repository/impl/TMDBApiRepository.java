@@ -53,8 +53,8 @@ public class TMDBApiRepository extends AbstractApiRepository<MovieInfo> {
 		try {
 			optional = doGet(searchParams);
 		} catch (IOException | IllegalStateException | URISyntaxException e) {
-			logger.error(String.format("Failed to process request for url [%s] with error [%s]", API_BASE_URL, e.getLocalizedMessage()));
-			throw new MediaFinderException(String.format("Failed to process request for url [%s] with error [%s]", API_BASE_URL, e.getLocalizedMessage()));
+			logger.error(String.format(MSG_GENERIC_FAILED_TO_PROCESS_REQUEST, API_BASE_URL, e.getLocalizedMessage()));
+			throw new MediaFinderException(String.format(MSG_GENERIC_FAILED_TO_PROCESS_REQUEST, API_BASE_URL, e.getLocalizedMessage()));
 		}
 		
 		if(optional.isPresent()) {
