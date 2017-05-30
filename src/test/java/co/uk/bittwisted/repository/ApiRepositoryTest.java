@@ -1,6 +1,8 @@
 package co.uk.bittwisted.repository;
 
-import co.uk.bittwisted.repository.impl.LastFMApiRepository;
+import co.uk.bittwisted.common.exceptions.MediaFinderException;
+import co.uk.bittwisted.domain.BaseMediaInfo;
+import co.uk.bittwisted.repository.impl.AbstractApiRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertTrue;
@@ -65,11 +68,11 @@ public class ApiRepositoryTest {
 		HttpClient mockClient = mock(HttpClient.class);
 		Mockito.when(mockClient.execute(Mockito.any(HttpUriRequest.class))).thenReturn(response);
 
-		LastFMApiRepository lastFMApiRepository = new LastFMApiRepository();
-		lastFMApiRepository.setHttpClient(mockClient);
-		lastFMApiRepository.setApiBaseURL(VALID_URL);
+		DummyRepository dummyRepository = new DummyRepository();
+		dummyRepository.setHttpClient(mockClient);
+		dummyRepository.setApiBaseURL(VALID_URL);
 
-		Optional<JsonNode> httpResponse = lastFMApiRepository.doGet();
+		Optional<JsonNode> httpResponse = dummyRepository.doGet();
 		assertTrue(httpResponse.isPresent());
 	}
 	
@@ -79,11 +82,11 @@ public class ApiRepositoryTest {
 		HttpClient mockClient = mock(HttpClient.class);
 		Mockito.when(mockClient.execute(Mockito.any(HttpUriRequest.class))).thenReturn(response);
 		
-		LastFMApiRepository lastFMApiRepository = new LastFMApiRepository();
-		lastFMApiRepository.setHttpClient(mockClient);
-		lastFMApiRepository.setApiBaseURL(VALID_URL);
+		DummyRepository dummyRepository = new DummyRepository();
+		dummyRepository.setHttpClient(mockClient);
+		dummyRepository.setApiBaseURL(VALID_URL);
 		
-		lastFMApiRepository.doGet();
+		dummyRepository.doGet();
 	}
 
 	@Test(expected = IOException.class)
@@ -92,11 +95,11 @@ public class ApiRepositoryTest {
 		HttpClient mockClient = mock(HttpClient.class);
 		Mockito.when(mockClient.execute(Mockito.any(HttpUriRequest.class))).thenReturn(response);
 		
-		LastFMApiRepository lastFMApiRepository = new LastFMApiRepository();
-		lastFMApiRepository.setHttpClient(mockClient);
-		lastFMApiRepository.setApiBaseURL(VALID_URL);
+		DummyRepository dummyRepository = new DummyRepository();
+		dummyRepository.setHttpClient(mockClient);
+		dummyRepository.setApiBaseURL(VALID_URL);
 		
-		lastFMApiRepository.doGet();
+		dummyRepository.doGet();
 	}
 	
 	@Test
@@ -106,9 +109,9 @@ public class ApiRepositoryTest {
 		params.put("test2", "value2");
 		params.put("test3", "value3");
 		
-		LastFMApiRepository lastFMApiRepository = new LastFMApiRepository();
-		lastFMApiRepository.setApiBaseURL(VALID_URL);
-		Optional<URI> optional = lastFMApiRepository.getUrlWithParameters(params);
+		DummyRepository dummyRepository = new DummyRepository();
+		dummyRepository.setApiBaseURL(VALID_URL);
+		Optional<URI> optional = dummyRepository.getUrlWithParameters(params);
 		
 		assertTrue(optional.isPresent());
 		assertTrue(optional.get().toASCIIString().equals(VALID_URL + "?test1=value1&test2=value2&test3=value3"));
@@ -124,5 +127,17 @@ public class ApiRepositoryTest {
 			throw new IllegalArgumentException(e);
 		}
 		return response;
+	}
+	
+	private class DummyRepository extends AbstractApiRepository<BaseMediaInfo> {
+		
+		DummyRepository() {
+			super(VALID_URL);
+		}
+		
+		@Override
+		public List<BaseMediaInfo> search(String query) throws MediaFinderException {
+			return null;
+		}
 	}
 }

@@ -35,7 +35,7 @@ public abstract class AbstractApiRepository<T extends BaseMediaInfo> implements 
 	private final String MSG_INVALID_RESPONSE_STATUS = "Expected HTTP response status 200 but instead got [%s]";
 	final String MSG_GENERIC_FAILED_TO_PROCESS_REQUEST = "Failed to process request for url [%s] with error [%s]";
 	
-	AbstractApiRepository(String apiBaseURL) {
+	protected AbstractApiRepository(String apiBaseURL) {
 		this.apiBaseURL = apiBaseURL;
 	}
 	
