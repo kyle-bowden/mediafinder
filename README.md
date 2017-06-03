@@ -1,4 +1,6 @@
-# Media Finder (Ksubaka Tech Test)
+# Media Finder (Tech Test)
+
+An Application(Spring BOOT) that uses public API's to search for movies and albums.
 
 ## Online API's Used
 1. Last FM (Music) - http://www.last.fm/api
